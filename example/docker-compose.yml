@@ -28,7 +28,8 @@ services:
       BORG_REPO: /borg/repo
       BORG_PASSPHRASE: it-was-wham
 
-  # Below are just quick borg command examples
+  # Below are just quick borg command samples
+  # Run with `docker-compose run init` (for example)
 
   init:
     <<: *borg
