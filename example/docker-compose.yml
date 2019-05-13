@@ -7,7 +7,7 @@ services:
     image: dannyben/borg-client
 
     volumes:
-      # Mount the folder you wish to back up, to any folder inside
+      # Mount the folder you wish to backup, to any folder inside
       # the container (suggested: /borg/source)
       - ./back-me-up:/borg/source
 
