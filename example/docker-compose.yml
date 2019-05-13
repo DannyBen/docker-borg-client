@@ -1,0 +1,51 @@
+version: '3'
+
+volumes: { cache, config, ssh }
+
+services:
+  borg:
+    image: dannyben/borg-client
+
+    volumes:
+      # Mount the folder you wish to back up, to any folder inside
+      # the container (suggested: /borg/source)
+      - ./back-me-up:/borg/source
+
+      # If using a local folder as a borg repository, mount this folder
+      # to the host as well. The folder inside the container should be 
+      # the same as your $BORG_REPO variable.
+      - ./repo:/borg/repo
+
+      # Borg internals
+      - cache:/root/.cache/borg
+      - config:/root/.config/borg
+      - ssh:/root/.ssh
+
+      # Mount the private key. In this example we are using a sample key.
+      - ./keys/testkey_id_rsa:/root/.ssh/id_rsa:ro
+
+    environment:
+      BORG_REPO: /borg/repo
+      BORG_PASSPHRASE: it-was-wham
+
+  # Below are just quick borg command examples
+
+  init:
+    <<: *borg
+    command: init -e repokey-blake2
+
+  backup:
+    <<: *borg
+    command: create --stats --progress ::initial-backup /borg/source
+
+  delete:
+    <<: *borg
+    command: delete ::initial-backup
+
+  index:
+    <<: *borg
+    command: "list --format '{time}{TAB}{name}{NL}'"
+
+  list:
+    <<: *borg
+    command: "list --format '{size:8d} {mtime}{TAB}{path}{extra}{NL}' ::initial-backup"

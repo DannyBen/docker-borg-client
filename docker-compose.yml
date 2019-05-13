@@ -1,0 +1,48 @@
+# This is a docker-compose for development purposes
+
+version: '3'
+
+volumes: { cache, config, ssh }
+
+services:
+  bash:
+    build: .
+    entrypoint: /bin/bash
+    command: []
+    <<: &default
+      image: dannyben/borg-client
+
+      volumes:
+        - ./back-me-up:/borg/source
+        - ./repo:/borg/repo
+        - ./keys/testkey_id_rsa:/root/.ssh/id_rsa:ro
+        - cache:/root/.cache/borg
+        - config:/root/.config/borg
+        - ssh:/root/.ssh
+
+      environment:
+        BORG_REPO:
+        BORG_PASSPHRASE:
+
+  borg: &borg
+    <<: *default
+
+  init:
+    <<: *borg
+    command: init -e repokey-blake2
+
+  backup:
+    <<: *borg
+    command: create --stats --progress ::initial-backup /borg/source
+
+  delete:
+    <<: *borg
+    command: delete ::initial-backup
+
+  index:
+    <<: *borg
+    command: "list --format '{time}{TAB}{name}{NL}'"
+
+  list:
+    <<: *borg
+    command: "list --format '{size:8d} {mtime}{TAB}{path}{extra}{NL}' ::initial-backup"
