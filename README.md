@@ -20,7 +20,7 @@ Download the files in the [example](example) folder, and then run:
 $ docker-compose run init
 $ docker-compose run backup
 $ docker-compose run index
-$ docker-compose run list initial-backup
+$ docker-compose run list
 ```
 
 
@@ -39,13 +39,6 @@ $ docker run --rm -it \
   dannyben/borg-client init -e none
 ```
 
-
-Known Issues
---------------------------------------------------
-
-If you are getting a python warning 
-`Using a pure-python msgpack! This will result in lower performance.` - this
-is a [known issue in the borg Alpine package][2] that will be fixed soon.
 
 
 [1]: https://borgbackup.readthedocs.io/en/stable/
